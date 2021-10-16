@@ -23,8 +23,7 @@ def segment_image(segmentation_module, img, device):
     with torch.no_grad():
         scores = segmentation_module(singleton_batch, seg_size=seg_size)
 
-    _, pred = torch.max(scores, dim=1)
-    pred = pred.cpu()[0].numpy()
+    pred = torch.max(scores, dim=1).indices.cpu().squeeze().numpy()
     return pred
 
 
