@@ -14,6 +14,7 @@ transform = torchvision.transforms.Compose(
         ),  # across a large photo dataset.
     ]
 )
+
 # Function for segmenting wall in the input image
 def segment_image(segmentation_module, img, device):
     img_data = transform(img)
@@ -24,7 +25,8 @@ def segment_image(segmentation_module, img, device):
         scores = segmentation_module(singleton_batch, seg_size=seg_size)
 
     pred = torch.max(scores, dim=1).indices.cpu().squeeze().numpy()
-    return pred
+    score = torch.max(scores, dim=1).values.cpu().squeeze().numpy()
+    return pred, score
 
 
 def get_mask(img, pred):
