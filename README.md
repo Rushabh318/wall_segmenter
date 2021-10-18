@@ -28,9 +28,9 @@ segmenter = wallseg.build_segmenter(
 img_path = Path("room.jpeg")
 img = Image.open(img_path).convert("RGB")
 
-pred = wallseg.segment_image(segmenter, img, device)
+bool_mask, scores = wallseg.segment_image(segmenter, img, device)
 
-wallseg.visualize_wall(np.asarray(img), pred)
+wallseg.visualize_wall(np.asarray(img), bool_mask)
 ```
 
 ![png](wallseg_result.png)
