@@ -35,7 +35,7 @@ def get_mask(img, bool_mask):
     black_green = img.copy()
     img_green[bool_mask == 1] = [0, 255, 0]
     black_green[bool_mask == 1] = [0, 255, 0]
-    black_green[bool_mask != 0] = [0, 0, 0]
+    black_green[bool_mask == 0] = [0, 0, 0]
     return black_green, img_green
 
 
