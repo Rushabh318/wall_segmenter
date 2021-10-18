@@ -24,21 +24,22 @@ def segment_image(segmentation_module, img, device):
     with torch.no_grad():
         scores = segmentation_module(singleton_batch, seg_size=seg_size)
 
-    pred = torch.max(scores, dim=1).indices.cpu().squeeze().numpy()
-    score = torch.max(scores, dim=1).values.cpu().squeeze().numpy()
-    return pred, score
+    indices = torch.max(scores, dim=1).indices.cpu().squeeze().numpy()
+    bool_mask = np.where(indices == 0, 1, 0)
+    scores = torch.max(scores, dim=1).values.cpu().squeeze().numpy()
+    return bool_mask, scores
 
 
-def get_mask(img, pred):
+def get_mask(img, bool_mask):
     img_green = img.copy()
     black_green = img.copy()
-    img_green[pred == 0] = [0, 255, 0]
-    black_green[pred == 0] = [0, 255, 0]
-    black_green[pred != 0] = [0, 0, 0]
+    img_green[bool_mask == 1] = [0, 255, 0]
+    black_green[bool_mask == 1] = [0, 255, 0]
+    black_green[bool_mask != 0] = [0, 0, 0]
     return black_green, img_green
 
 
-def visualize_wall(img, pred):
-    black_green, img_green = get_mask(img, pred)
+def visualize_wall(img, bool_mask):
+    black_green, img_green = get_mask(img, bool_mask)
     im_vis = np.concatenate((img, black_green, img_green), axis=1)
     return PIL.Image.fromarray(im_vis)
