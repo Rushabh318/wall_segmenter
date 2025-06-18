@@ -22,7 +22,9 @@ def segment_image(segmentation_module, img, device):
     seg_size = np.array(img).shape[:2]
 
     with torch.no_grad():
-        scores = segmentation_module(singleton_batch, seg_size=seg_size)
+        with torch.amp.autocast(device_type='cuda'):
+            # Forward pass
+            scores = segmentation_module(singleton_batch, seg_size=seg_size)
 
     indices = torch.max(scores, dim=1).indices.cpu().squeeze().numpy()
     bool_mask = np.where(indices == 0, 1, 0)
